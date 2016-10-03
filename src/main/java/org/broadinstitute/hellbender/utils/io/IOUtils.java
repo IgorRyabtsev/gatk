@@ -29,10 +29,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.net.URI;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
@@ -555,6 +552,25 @@ public final class IOUtils {
             throw new UserException.CouldNotReadInputFile(file, "It isn't a regular file");
         }
         if ( ! file.canRead() ) {
+            throw new UserException.CouldNotReadInputFile(file, "It is not readable, check the file permissions");
+        }
+    }
+
+    /**
+     * @param file file to test
+     * @throws org.broadinstitute.hellbender.exceptions.UserException.CouldNotReadInputFile if the file isn't readable
+     *         and a regular file
+     */
+    public static void assertFileIsReadable(final Path file) {
+        Utils.nonNull(file);
+
+        if ( ! Files.exists(file) ) {
+            throw new UserException.CouldNotReadInputFile(file, "It doesn't exist.");
+        }
+        if ( ! Files.isRegularFile(file) ) {
+            throw new UserException.CouldNotReadInputFile(file, "It isn't a regular file");
+        }
+        if ( ! Files.isReadable(file) ) {
             throw new UserException.CouldNotReadInputFile(file, "It is not readable, check the file permissions");
         }
     }
