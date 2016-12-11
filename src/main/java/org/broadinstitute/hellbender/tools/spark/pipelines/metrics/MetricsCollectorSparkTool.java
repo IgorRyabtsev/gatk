@@ -5,6 +5,9 @@ import htsjdk.samtools.SAMFileHeader.SortOrder;
 import htsjdk.samtools.metrics.Header;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.broadinstitute.barclay.argparser.CommandLinePluginDescriptor;
+import org.broadinstitute.barclay.argparser.CommandLinePluginProvider;
+import org.broadinstitute.hellbender.cmdline.GATKPlugin.GATKReadFilterPluginDescriptor;
 import org.broadinstitute.hellbender.engine.AuthHolder;
 import org.broadinstitute.hellbender.engine.filters.ReadFilter;
 import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
@@ -12,6 +15,7 @@ import org.broadinstitute.hellbender.metrics.MetricsArgumentCollection;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.ReadUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,11 +31,12 @@ import java.util.List;
  * collection lifecycle.
  */
 public abstract class MetricsCollectorSparkTool<T extends MetricsArgumentCollection>
-        extends GATKSparkTool {
+        extends GATKSparkTool
+        implements CommandLinePluginProvider {
 
     private static final long serialVersionUID = 1l;
 
-    /**
+    /**nR
      * The following {@link MetricsCollectorSpark} methods must be implemented by subclasses
      * and should be forwarded to the embedded collector.
      */
@@ -50,6 +55,15 @@ public abstract class MetricsCollectorSparkTool<T extends MetricsArgumentCollect
 
     @Override
     public final boolean requiresReads(){ return true; }
+
+    /**
+     * Return the list of GATKCommandLinePluginDescriptors to be used for this tool.
+     * Uses the read filter plugin.
+     */
+    @Override
+    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
+        return Collections.singletonList(new GATKReadFilterPluginDescriptor(getDefaultReadFilters()));
+    }
 
     /**
      * The runTool method used when metrics collector tools are run

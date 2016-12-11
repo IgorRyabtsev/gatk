@@ -7,10 +7,12 @@ import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
 import htsjdk.samtools.util.StringUtil;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.PicardCommandLineProgram;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.FastaProgramGroup;
 import org.broadinstitute.hellbender.exceptions.UserException;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import static org.broadinstitute.hellbender.utils.Utils.calcMD5;
         oneLineSummary = "Creates a dict file from reference sequence in fasta format",
         programGroup = FastaProgramGroup.class
 )
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public final class CreateSequenceDictionary extends PicardCommandLineProgram {
 
     // The following attributes define the command-line arguments

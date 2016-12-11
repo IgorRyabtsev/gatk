@@ -17,13 +17,13 @@ public final class SpecialArgumentsCollection implements Serializable {
     public static final String ARGUMENTS_FILE_FULLNAME = "arguments_file";
     private static final long serialVersionUID = 1L;
 
-    @Argument(shortName = "h", fullName = HELP_FULLNAME, doc= "display the help message", special = true)
+    @Argument(shortName = "h", fullName = HELP_FULLNAME, doc= "display the help message", special = true, common = true)
     public boolean HELP = false;
 
-    @Argument(fullName = VERSION_FULLNAME, doc="display the version number for this tool", special = true)
+    @Argument(fullName = VERSION_FULLNAME, doc="display the version number for this tool", special = true, common = true)
     public boolean VERSION = false;
 
-    @Argument(fullName = ARGUMENTS_FILE_FULLNAME, doc="read one or more arguments files and add them to the command line", optional = true, special = true)
+    @Argument(fullName = ARGUMENTS_FILE_FULLNAME, doc="read one or more arguments files and add them to the command line", optional = true, special = true, common = true)
     public List<File> ARGUMENTS_FILE = new ArrayList<>();
 
 }

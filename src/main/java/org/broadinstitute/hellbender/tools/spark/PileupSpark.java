@@ -6,6 +6,7 @@ import org.apache.spark.api.java.function.Function;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.Hidden;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.AlignmentContext;
@@ -15,6 +16,7 @@ import org.broadinstitute.hellbender.engine.ReferenceContext;
 import org.broadinstitute.hellbender.engine.filters.ReadFilter;
 import org.broadinstitute.hellbender.engine.filters.ReadFilterLibrary;
 import org.broadinstitute.hellbender.engine.filters.WellformedReadFilter;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.pileup.PileupElement;
 import org.broadinstitute.hellbender.utils.pileup.ReadPileup;
 import org.broadinstitute.hellbender.engine.spark.LocusWalkerSpark;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
         + "additional information can be added to the output as extra columns; see options detailed below.",
         oneLineSummary = "Print read alignments in Pileup-style format on Spark",
         programGroup = SparkProgramGroup.class)
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public final class PileupSpark extends LocusWalkerSpark {
     private static final long serialVersionUID = 1L;
 

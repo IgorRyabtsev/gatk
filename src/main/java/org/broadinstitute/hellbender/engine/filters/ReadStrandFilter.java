@@ -1,11 +1,14 @@
 package org.broadinstitute.hellbender.engine.filters;
 
 import org.broadinstitute.barclay.argparser.Argument;
+import org.broadinstitute.barclay.help.DocumentedFeature;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
 /**
  * Keep only reads whose strand is forward or reverse
  */
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
 public final class ReadStrandFilter extends ReadFilter {
     private static final long serialVersionUID = 1L;
 

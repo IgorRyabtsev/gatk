@@ -5,9 +5,11 @@ import htsjdk.samtools.util.CloserUtil;
 import htsjdk.samtools.util.IOUtil;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.PicardCommandLineProgram;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.ReadProgramGroup;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.runtime.ProgressLogger;
 
 import java.io.File;
@@ -21,6 +23,7 @@ import java.io.File;
         oneLineSummary = "Sorts a SAM/BAM/CRAM file",
         programGroup = ReadProgramGroup.class
 )
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public final class SortSam extends PicardCommandLineProgram {
 
     @Argument(doc = "The SAM/BAM/CRAM file to sort.",

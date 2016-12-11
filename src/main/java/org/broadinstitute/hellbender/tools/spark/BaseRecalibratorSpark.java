@@ -1,5 +1,6 @@
 package org.broadinstitute.hellbender.tools.spark;
 
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.utils.SerializableFunction;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -20,6 +21,7 @@ import org.broadinstitute.hellbender.tools.spark.transforms.BaseRecalibratorSpar
 import org.broadinstitute.hellbender.tools.walkers.bqsr.BaseRecalibrator;
 import org.broadinstitute.hellbender.utils.SimpleInterval;
 import org.broadinstitute.hellbender.utils.gcs.BucketUtils;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.recalibration.BaseRecalibrationEngine;
 import org.broadinstitute.hellbender.utils.recalibration.RecalUtils;
@@ -35,6 +37,7 @@ import java.util.List;
         oneLineSummary = "BaseRecalibrator on Spark",
         programGroup = SparkProgramGroup.class
 )
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public class BaseRecalibratorSpark extends GATKSparkTool {
     private static final long serialVersionUID = 1L;
 

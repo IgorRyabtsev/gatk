@@ -1,6 +1,8 @@
 package org.broadinstitute.hellbender.engine.filters;
 
 import org.broadinstitute.barclay.argparser.Argument;
+import org.broadinstitute.barclay.help.DocumentedFeature;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
 import java.io.Serializable;
@@ -8,6 +10,7 @@ import java.io.Serializable;
 /**
  * Keep only reads whose length is >= min value and <= max value.
  */
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
 public final class ReadLengthReadFilter extends ReadFilter implements Serializable{
     private static final long serialVersionUID = 1L;
 

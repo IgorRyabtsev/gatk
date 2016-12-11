@@ -9,6 +9,7 @@ import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.Advanced;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.VariantProgramGroup;
 import org.broadinstitute.hellbender.engine.FeatureContext;
@@ -18,6 +19,7 @@ import org.broadinstitute.hellbender.engine.ReferenceContext;
 import org.broadinstitute.hellbender.engine.MultiVariantWalker;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.tools.walkers.annotator.AnnotationUtils;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.variant.GATKVCFConstants;
 import org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils;
 
@@ -116,6 +118,7 @@ import java.util.regex.Pattern;
         oneLineSummary = " Apply a score cutoff to filter variants based on a recalibration table",
         programGroup = VariantProgramGroup.class
 )
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_VARMANIP)
 public class ApplyVQSR extends MultiVariantWalker {
 
     protected static final String LOW_VQSLOD_FILTER_NAME = "LOW_VQSLOD";

@@ -23,7 +23,8 @@ public class InsertSizeMetricsArgumentCollection extends MetricsArgumentCollecti
 
     @Argument(fullName = "histogramPlotFile",
             shortName="H",
-            doc="File to write insert size Histogram chart to.")
+            doc="File to write insert size Histogram chart to.",
+            optional = true)
     public String histogramPlotFile;
 
     @Argument(doc="Generate mean, sd and plots by trimming the data down to MEDIAN + maxMADTolerance*MEDIAN_ABSOLUTE_DEVIATION. " +

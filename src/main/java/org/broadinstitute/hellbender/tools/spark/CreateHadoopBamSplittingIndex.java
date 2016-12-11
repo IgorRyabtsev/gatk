@@ -13,10 +13,12 @@ import org.apache.logging.log4j.Logger;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.CommandLineException;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.CommandLineProgram;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.exceptions.UserException;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.io.IOUtils;
 import org.broadinstitute.hellbender.utils.read.ReadConstants;
 import org.codehaus.plexus.util.FileUtils;
@@ -32,6 +34,7 @@ import java.io.IOException;
 @CommandLineProgramProperties(summary = "Create a HadoopBam splitting index as well as a bam index from a bam file.",
         oneLineSummary = "create a hadoop-bam splitting index" ,
         programGroup = SparkProgramGroup.class)
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public final class CreateHadoopBamSplittingIndex extends CommandLineProgram {
     private static final Logger logger = LogManager.getLogger(CreateHadoopBamSplittingIndex.class);
 

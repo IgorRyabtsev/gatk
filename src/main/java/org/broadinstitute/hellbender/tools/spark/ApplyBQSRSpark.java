@@ -7,18 +7,21 @@ import org.apache.spark.broadcast.Broadcast;
 import org.broadinstitute.barclay.argparser.Argument;
 import org.broadinstitute.barclay.argparser.ArgumentCollection;
 import org.broadinstitute.barclay.argparser.CommandLineProgramProperties;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
 import org.broadinstitute.hellbender.tools.ApplyBQSRArgumentCollection;
 import org.broadinstitute.hellbender.tools.spark.transforms.ApplyBQSRSparkFn;
 import org.broadinstitute.hellbender.utils.gcs.BucketUtils;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.recalibration.RecalibrationReport;
 
 @CommandLineProgramProperties(summary="Apply Base Quality Recalibration to a SAM/BAM/CRAM file using Spark",
         oneLineSummary="ApplyBQSR on Spark",
         programGroup = SparkProgramGroup.class)
+@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
 public final class ApplyBQSRSpark extends GATKSparkTool {
     private static final long serialVersionUID = 0l;
 

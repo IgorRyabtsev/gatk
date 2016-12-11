@@ -1,7 +1,9 @@
 package org.broadinstitute.hellbender.engine.filters;
 
 import htsjdk.samtools.Cigar;
+import org.broadinstitute.barclay.help.DocumentedFeature;
 import org.broadinstitute.hellbender.utils.QualityUtils;
+import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.CigarUtils;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
@@ -15,51 +17,61 @@ public final class ReadFilterLibrary {
     /**
      * local classes for static read filters
      */
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class AllowAllReadsReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){return true;}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     //Note: do not call getCigar to avoid creation of new Cigar objects
     public static class CigarContainsNoNOperator extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return ! CigarUtils.containsNOperator(read.getCigarElements());}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class FirstOfPairReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test (final GATKRead read) {
             return read.isFirstOfPair();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class GoodCigarReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test (final GATKRead read) {
             return CigarUtils.isGood(read.getCigar());}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class NonZeroFragmentLengthReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return read.getFragmentLength() != 0;}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MatchingBasesAndQualsReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return read.getLength() == read.getBaseQualityCount();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class HasReadGroupReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return read.getReadGroup() != null;}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MappedReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return !read.isUnmapped();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MappingQualityAvailableReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return read.getMappingQuality() != QualityUtils.MAPPING_QUALITY_UNAVAILABLE;}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MappingQualityNotZeroReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
@@ -68,6 +80,7 @@ public final class ReadFilterLibrary {
     /**
      * Reads that either have a mate that maps to the same contig, or don't have a mapped mate.
      */
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MateOnSameContigOrNoMappedMateReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
@@ -78,6 +91,7 @@ public final class ReadFilterLibrary {
     /**
      * Reads that have a mapped mate and both mate and read are on different same strands (ie the usual situation).
      */
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class MateDifferentStrandReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
@@ -86,6 +100,7 @@ public final class ReadFilterLibrary {
                     ! read.mateIsUnmapped() &&
                     read.mateIsReverseStrand() != read.isReverseStrand();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class NonZeroReferenceLengthAlignmentReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test (final GATKRead read) {
@@ -94,31 +109,37 @@ public final class ReadFilterLibrary {
                     .anyMatch(c -> c.getOperator().consumesReferenceBases() && c.getLength() > 0);
         }}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class NotDuplicateReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return ! read.isDuplicate();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class NotSecondaryAlignmentReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return !read.isSecondaryAlignment();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class NotSupplementaryAlignmentReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return !read.isSupplementaryAlignment();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class PairedReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return read.isPaired();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class PassesVendorQualityCheckReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return ! read.failsVendorQualityCheck();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class ProperlyPairedReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
@@ -127,34 +148,40 @@ public final class ReadFilterLibrary {
     //TODO: should this reject supplementary alignments ? If not it should be
     //removed since its redundant with NotSecondaryAlignmentReadFilter
     //https://github.com/broadinstitute/gatk/issues/2165
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class PrimaryAlignmentReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
             return ! read.isSecondaryAlignment();}}
 
     //Note: do not call getCigar to avoid creation of new Cigar objects
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class ReadLengthEqualsCigarLengthReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test (final GATKRead read) {
             return read.isUnmapped() ||
                     read.getLength() == Cigar.getReadLength(read.getCigarElements());}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class SecondOfPairReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test (final GATKRead read) {
             return read.isSecondOfPair();}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class SeqIsStoredReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){
             return read.getLength() > 0;}}
 
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class ValidAlignmentStartReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read){return read.isUnmapped() || read.getStart() > 0;}}
 
     // Alignment doesn't align to a negative number of bases in the reference.
     //Note: to match gatk3 we must keep reads that align to zero bases in the reference.
+    @DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
     public static class ValidAlignmentEndReadFilter extends ReadFilter {
         private static final long serialVersionUID = 1L;
         @Override public boolean test(final GATKRead read) {
