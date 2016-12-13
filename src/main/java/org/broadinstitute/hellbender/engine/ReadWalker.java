@@ -1,6 +1,7 @@
 package org.broadinstitute.hellbender.engine;
 
 import org.broadinstitute.barclay.argparser.CommandLinePluginDescriptor;
+import org.broadinstitute.barclay.argparser.CommandLinePluginProvider;
 import org.broadinstitute.hellbender.cmdline.GATKPlugin.GATKReadFilterPluginDescriptor;
 import org.broadinstitute.hellbender.engine.filters.ReadFilter;
 import org.broadinstitute.hellbender.engine.filters.WellformedReadFilter;
@@ -21,7 +22,7 @@ import java.util.stream.StreamSupport;
  * ReadWalker authors must implement the apply() method to process each read, and may optionally implement
  * onTraversalStart() and/or onTraversalSuccess(). See the PrintReadsWithReference walker for an example.
  */
-public abstract class ReadWalker extends GATKTool {
+public abstract class ReadWalker extends GATKTool implements CommandLinePluginProvider {
 
     @Override
     public boolean requiresReads() {
@@ -39,7 +40,7 @@ public abstract class ReadWalker extends GATKTool {
      * Uses the read filter plugin.
      */
     @Override
-    protected List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
+    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
         return Collections.singletonList(new GATKReadFilterPluginDescriptor(getDefaultReadFilters()));
     }
 

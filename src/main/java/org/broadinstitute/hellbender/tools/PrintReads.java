@@ -17,7 +17,7 @@ import java.io.File;
 /**
  * Print reads from a SAM/BAM/CRAM file.
  *
- * {@GATK.WalkerType ReadWalker}
+ * {@GATK.walkertype ReadWalker}
  */
 @CommandLineProgramProperties(
 	summary = "Prints reads from the input SAM/BAM/CRAM file to the SAM/BAM/CRAM file.",

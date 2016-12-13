@@ -38,17 +38,17 @@ public class GATKReadFilterPluginDescriptor extends CommandLinePluginDescriptor<
 
     @Argument(fullName = StandardArgumentDefinitions.READ_FILTER_LONG_NAME,
             shortName = StandardArgumentDefinitions.READ_FILTER_SHORT_NAME,
-            doc="Read filters to be applied before analysis", optional=true)
+            doc="Read filters to be applied before analysis", optional=true, common = true)
     public final List<String> userReadFilterNames = new ArrayList<>(); // preserve order
 
     @Argument(fullName = StandardArgumentDefinitions.DISABLE_READ_FILTER_LONG_NAME,
             shortName = StandardArgumentDefinitions.DISABLE_READ_FILTER_SHORT_NAME,
-            doc="Read filters to be disabled before analysis", optional=true)
+            doc="Read filters to be disabled before analysis", optional=true, common = true)
     public final Set<String> disableFilters = new HashSet<>();
 
     @Argument(fullName = "disableAllReadFilters",
             shortName = "disableAllReadFilters",
-            doc = "Disable all read filters", common = false, optional = true)
+            doc = "Disable all read filters", common = true, optional = true)
     public boolean disableAllReadFilters = false;
 
     // Map of read filter (simple) class names to the corresponding discovered plugin instance
@@ -161,6 +161,13 @@ public class GATKReadFilterPluginDescriptor extends CommandLinePluginDescriptor<
         }
         return isAllowed;
     }
+
+    /**
+     * Get the list of default plugins used for this instance of this descriptor. Used for help/doc generation.
+     * @return List of T
+     */
+    @Override
+    public List<Object> getDefaultInstances() { return new ArrayList<>(toolDefaultReadFilters.values()); }
 
     /**
      * Pass back the list of ReadFilter instances that were actually seen on the
@@ -355,6 +362,11 @@ public class GATKReadFilterPluginDescriptor extends CommandLinePluginDescriptor<
             }
             return finalFilter;
         }
+    }
+
+    @Override
+    public Class<?> getClassForInstance(final String pluginName) {
+        return readFilters.get(pluginName).getClass();
     }
 
 }

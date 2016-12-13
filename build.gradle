@@ -22,6 +22,7 @@ plugins {
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import de.undercouch.gradle.tasks.download.Download
+import javax.tools.ToolProvider;
 
 mainClassName = "org.broadinstitute.hellbender.Main"
 
@@ -94,7 +95,9 @@ compileTestJava {
 }
 
 dependencies {
-    compile 'org.broadinstitute:barclay:1.0.0'
+    compile 'org.broadinstitute:barclay:1.0.0-1-gd724ff5-SNAPSHOT'
+    // javadoc utilities
+    compile(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
     compile 'com.intel:genomicsdb:0.3.0'
     compile 'com.opencsv:opencsv:3.4'
     compile 'com.google.guava:guava:18.0'
@@ -372,11 +375,41 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-// This is a hack to disable the java 8 default javadoc lint until we fix the html formatting
 if (JavaVersion.current().isJava8Compatible()) {
     tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
+        // do this for all javadoc tasks, inlcuding gatkDocs
+        options.addStringOption('Xdoclint:none')
     }
+}
+
+javadoc {
+    // This is a hack to disable the java 8 default javadoc lint until we fix the html formatting
+    // We only want to do this for the javadoc task, not gatkDoc
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+// Generate GATK Online Doc
+task gatkDoc(type: Javadoc, dependsOn: shadowJar) {
+    source = sourceSets.main.allJava
+    classpath = sourceSets.main.runtimeClasspath
+
+    // Since the custom doclet we run is basically another entry point for gatk, it needs all of the gatk
+    // dependencies on the docletpath (i.e., Barclay , etc), so we depend on and use the shadowJar. Also,
+    // add the resources folder to ensure log4j is configured.
+    options.docletpath = [file(shadowJar.archivePath)] + files("src/main/resources")
+    options.doclet = "org.broadinstitute.hellbender.utils.help.GATKHelpDoclet"
+
+    // ensure the target folder already exists
+    File outDir = new File("./gatkDoc")
+    outDir.mkdirs()
+    outputs.dir outDir
+
+    options.addStringOption("destination-dir", outDir.getAbsolutePath())
+    options.addStringOption("settings-dir", "src/main/resources/org/broadinstitute/hellbender/utils/helpTemplates");
+    options.addStringOption("output-file-extension", "html")
+    options.addStringOption("absolute-version", getVersion())
+    options.addStringOption("build-timestamp", new Date().format("dd-mm-yyyy hh:mm:ss"))
+    options.addStringOption("verbose")
 }
 
 /**
@@ -449,8 +482,6 @@ uploadArchives {
         }
     }
 }
-
-
 
 task installSpark{ dependsOn sparkJar }
 task installAll{  dependsOn installSpark, installDist }
