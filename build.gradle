@@ -95,7 +95,7 @@ compileTestJava {
 }
 
 dependencies {
-    compile 'org.broadinstitute:barclay:1.0.0-1-gd724ff5-SNAPSHOT'
+    compile 'org.broadinstitute:barclay:1.0.0-2-gb718440-SNAPSHOT'
     // javadoc utilities
     compile(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
     compile 'com.intel:genomicsdb:0.3.0'
