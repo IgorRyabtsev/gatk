@@ -24,7 +24,6 @@ import org.broadinstitute.hellbender.tools.spark.transforms.ApplyBQSRSparkFn;
 import org.broadinstitute.hellbender.tools.spark.transforms.BaseRecalibratorSparkFn;
 import org.broadinstitute.hellbender.tools.walkers.bqsr.BaseRecalibrator;
 import org.broadinstitute.hellbender.utils.SimpleInterval;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.recalibration.BaseRecalibrationEngine;
 import org.broadinstitute.hellbender.utils.recalibration.RecalibrationArgumentCollection;
@@ -38,7 +37,7 @@ import java.util.List;
         usageExample = "BQSRPipelineSpark -I in.bam --knownSites in.vcf -O out.bam",
         programGroup = SparkPipelineProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK_PIPELINE)
+@DocumentedFeature
 /**
  * BQSR. The final result is analysis-ready reads.
  */

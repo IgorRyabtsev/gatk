@@ -22,7 +22,7 @@ import java.util.*;
  *   PU:1000G-mpimg-080821-1_1
  * would filter out a read with the read group PU:1000G-mpimg-080821-1_1
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class ReadGroupBlackListReadFilter extends ReadFilter implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String COMMENT_START = "#";

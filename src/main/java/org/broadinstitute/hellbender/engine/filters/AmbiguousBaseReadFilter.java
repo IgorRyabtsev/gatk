@@ -9,7 +9,7 @@ import org.broadinstitute.hellbender.utils.read.GATKRead;
 /**
  * Filters out reads with more than a threshold number of N's
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class AmbiguousBaseReadFilter extends ReadFilter {
 
     private static final long serialVersionUID = 1L;

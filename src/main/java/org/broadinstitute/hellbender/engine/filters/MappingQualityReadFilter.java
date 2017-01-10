@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Keep reads with mapping qualities above a specified threshold.
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class MappingQualityReadFilter extends ReadFilter implements Serializable {
     private static final long serialVersionUID = 1L;
 

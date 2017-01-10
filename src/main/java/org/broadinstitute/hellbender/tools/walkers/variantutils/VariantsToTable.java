@@ -18,7 +18,6 @@ import org.broadinstitute.hellbender.engine.ReferenceContext;
 import org.broadinstitute.hellbender.engine.VariantWalker;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.utils.Utils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils;
 import org.broadinstitute.hellbender.utils.variant.VcfUtils;
 
@@ -88,7 +87,7 @@ import java.util.function.Function;
         oneLineSummary = "Extract specific fields from a VCF file to a tab-delimited table",
         programGroup = VariantProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_VARMANIP)
+@DocumentedFeature
 public final class VariantsToTable extends VariantWalker {
 
     static final Logger logger = LogManager.getLogger(VariantsToTable.class);

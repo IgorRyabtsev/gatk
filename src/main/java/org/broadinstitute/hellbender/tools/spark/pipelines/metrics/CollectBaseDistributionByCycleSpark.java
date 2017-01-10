@@ -20,7 +20,6 @@ import org.broadinstitute.hellbender.tools.picard.analysis.BaseDistributionByCyc
 import org.broadinstitute.hellbender.tools.picard.analysis.CollectBaseDistributionByCycle;
 import org.broadinstitute.hellbender.utils.R.RScriptExecutor;
 import org.broadinstitute.hellbender.utils.Utils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.io.Resource;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
@@ -34,7 +33,7 @@ import java.util.List;
         oneLineSummary = "CollectBaseDistributionByCycle on Spark",
         programGroup = SparkProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK)
+@DocumentedFeature
 public final class CollectBaseDistributionByCycleSpark extends GATKSparkTool {
 
     private static final long serialVersionUID = 1L;

@@ -13,7 +13,6 @@ import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
 import org.broadinstitute.hellbender.tools.spark.bwa.BwaArgumentCollection;
 import org.broadinstitute.hellbender.tools.spark.bwa.BwaSparkEngine;
 import org.broadinstitute.hellbender.tools.spark.transforms.markduplicates.MarkDuplicatesSpark;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.markduplicates.MarkDuplicatesScoringStrategy;
 import org.broadinstitute.hellbender.utils.read.markduplicates.OpticalDuplicateFinder;
@@ -27,7 +26,7 @@ import org.broadinstitute.hellbender.utils.read.markduplicates.OpticalDuplicateF
         usageExample = "BwaAndMarkDuplicatesPipelineSpark -I single.bam -R referenceURL -O file:///tmp/output.bam",
         programGroup = SparkPipelineProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK_PIPELINE)
+@DocumentedFeature
 public final class BwaAndMarkDuplicatesPipelineSpark extends GATKSparkTool {
 
     private static final long serialVersionUID = 1L;

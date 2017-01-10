@@ -25,7 +25,6 @@ import org.broadinstitute.hellbender.tools.spark.transforms.BaseRecalibratorSpar
 import org.broadinstitute.hellbender.tools.spark.transforms.markduplicates.MarkDuplicatesSpark;
 import org.broadinstitute.hellbender.tools.walkers.bqsr.BaseRecalibrator;
 import org.broadinstitute.hellbender.utils.SimpleInterval;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.markduplicates.MarkDuplicatesScoringStrategy;
 import org.broadinstitute.hellbender.utils.read.markduplicates.OpticalDuplicateFinder;
@@ -43,7 +42,7 @@ import java.util.List;
         usageExample = "ReadsPipelineSpark -I single.bam -R referenceURL -knownSites variants.vcf -O file:///tmp/output.bam",
         programGroup = SparkPipelineProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK_PIPELINE)
+@DocumentedFeature
 /**
  * ReadsPipelineSpark is our standard pipeline that takes aligned reads (likely from BWA) and runs MarkDuplicates
  * and BQSR. The final result is analysis-ready reads.

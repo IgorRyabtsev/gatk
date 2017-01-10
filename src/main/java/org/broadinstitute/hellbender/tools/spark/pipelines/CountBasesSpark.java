@@ -9,7 +9,6 @@ import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
 import org.broadinstitute.hellbender.utils.gcs.BucketUtils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
 import java.io.PrintStream;
@@ -17,7 +16,7 @@ import java.io.PrintStream;
 @CommandLineProgramProperties(summary = "Counts bases in the input SAM/BAM",
         oneLineSummary = "CountBases on Spark",
         programGroup = SparkProgramGroup.class)
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK)
+@DocumentedFeature
 public final class CountBasesSpark extends GATKSparkTool {
 
     private static final long serialVersionUID = 1L;

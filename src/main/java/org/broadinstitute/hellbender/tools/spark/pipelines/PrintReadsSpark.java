@@ -10,11 +10,10 @@ import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
 import org.broadinstitute.hellbender.exceptions.UserException;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
 @CommandLineProgramProperties(summary = "Print reads from the input BAM", oneLineSummary = "PrintReads on Spark", programGroup = SparkProgramGroup.class)
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK)
+@DocumentedFeature
 public final class PrintReadsSpark extends GATKSparkTool {
 
     private static final long serialVersionUID = 1L;

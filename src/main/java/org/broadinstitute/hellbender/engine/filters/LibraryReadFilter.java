@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * Keep only reads from the specified library.
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class LibraryReadFilter extends ReadFilter implements Serializable {
     private static final long serialVersionUID = 1L;
 

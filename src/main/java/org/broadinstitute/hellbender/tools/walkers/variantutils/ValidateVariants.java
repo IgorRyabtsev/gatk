@@ -17,7 +17,6 @@ import org.broadinstitute.hellbender.engine.ReadsContext;
 import org.broadinstitute.hellbender.engine.ReferenceContext;
 import org.broadinstitute.hellbender.engine.VariantWalker;
 import org.broadinstitute.hellbender.exceptions.UserException;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 
 import java.util.*;
 
@@ -93,7 +92,7 @@ import java.util.*;
         oneLineSummary = "Validate VCF",
         programGroup = VariantProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_VARMANIP)
+@DocumentedFeature
 public final class ValidateVariants extends VariantWalker {
     static final Logger logger = LogManager.getLogger(ValidateVariants.class);
 

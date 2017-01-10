@@ -1,8 +1,5 @@
 package org.broadinstitute.hellbender.engine.filters;
 
-import com.google.rpc.Help;
-import org.broadinstitute.barclay.help.DocumentedFeature;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.Utils;
 
@@ -21,7 +18,6 @@ import java.util.stream.IntStream;
  * level.
  *
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS, enable = false)
 public class CountingReadFilter extends ReadFilter {
 
     private static final long serialVersionUID = 1L;

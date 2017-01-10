@@ -16,7 +16,6 @@ import org.broadinstitute.hellbender.engine.filters.ReadFilterLibrary;
 import org.broadinstitute.hellbender.engine.filters.WellformedReadFilter;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.utils.Utils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.recalibration.BaseRecalibrationEngine;
 import org.broadinstitute.hellbender.utils.recalibration.QuantizationInfo;
@@ -83,7 +82,7 @@ import java.util.List;
         oneLineSummary = "Generates recalibration table for BQSR",
         programGroup = ReadProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class BaseRecalibrator extends ReadWalker {
     protected static final Logger logger = LogManager.getLogger(BaseRecalibrator.class);
 

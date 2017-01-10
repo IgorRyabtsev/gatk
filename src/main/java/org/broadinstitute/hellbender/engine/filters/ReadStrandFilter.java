@@ -8,7 +8,7 @@ import org.broadinstitute.hellbender.utils.read.GATKRead;
 /**
  * Keep only reads whose strand is forward or reverse
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class ReadStrandFilter extends ReadFilter {
     private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@ import org.broadinstitute.hellbender.utils.read.GATKRead;
  * </p>
  *
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class OverclippedReadFilter extends ReadFilter{
 
     static final long serialVersionUID = 1L;

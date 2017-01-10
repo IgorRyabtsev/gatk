@@ -10,7 +10,7 @@ import org.broadinstitute.hellbender.utils.read.GATKRead;
  * to errors downstream. If a read passes this filter, the rest of the hellbender engine should be able to process it without
  * blowing up.
  */
-@DocumentedFeature(groupName=HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName=HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class WellformedReadFilter extends ReadFilter {
     private static final long serialVersionUID = 1l;
 

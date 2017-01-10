@@ -10,7 +10,6 @@ import org.broadinstitute.hellbender.cmdline.PicardCommandLineProgram;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.ReadProgramGroup;
 import org.broadinstitute.hellbender.exceptions.GATKException;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.mergealignment.*;
 
 import java.io.File;
@@ -36,7 +35,7 @@ import java.util.List;
         oneLineSummary = "Merges alignment data from a SAM/BAM with data in an unmapped SAM/BAM/CRAM file",
         programGroup = ReadProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class MergeBamAlignment extends PicardCommandLineProgram {
 
     @Argument(shortName = "UNMAPPED",

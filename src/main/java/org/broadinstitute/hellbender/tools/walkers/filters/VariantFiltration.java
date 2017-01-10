@@ -15,7 +15,6 @@ import org.broadinstitute.hellbender.cmdline.programgroups.VariantProgramGroup;
 import org.broadinstitute.hellbender.engine.*;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.utils.IntervalUtils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils;
 
 import java.io.File;
@@ -62,7 +61,7 @@ import static java.util.Collections.singleton;
         oneLineSummary = "Hard-filter variants VCF (mark them as FILTER)",
         programGroup = VariantProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_VARMANIP)
+@DocumentedFeature
 public final class VariantFiltration extends VariantWalker {
 
     /**

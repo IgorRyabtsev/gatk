@@ -18,7 +18,6 @@ import org.broadinstitute.hellbender.tools.readersplitters.LibraryNameSplitter;
 import org.broadinstitute.hellbender.tools.readersplitters.ReadGroupIdSplitter;
 import org.broadinstitute.hellbender.tools.readersplitters.ReaderSplitter;
 import org.broadinstitute.hellbender.tools.readersplitters.SampleNameSplitter;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.SAMFileGATKReadWriter;
 
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
         oneLineSummary = "Outputs reads from a SAM/BAM/CRAM by read group, sample and library name",
         programGroup = ReadProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class SplitReads extends ReadWalker {
 
     public static final String SAMPLE_SHORT_NAME = "SM";

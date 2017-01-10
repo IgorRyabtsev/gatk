@@ -11,7 +11,6 @@ import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.AuthHolder;
 import org.broadinstitute.hellbender.engine.filters.ReadFilter;
 import org.broadinstitute.hellbender.metrics.InsertSizeMetricsArgumentCollection;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.List;
         summary        = "Program to collect insert size distribution information in SAM/BAM/CRAM file(s)",
         oneLineSummary = "Collect Insert Size Distribution on Spark",
         programGroup   = SparkProgramGroup.class)
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK)
+@DocumentedFeature
 public final class CollectInsertSizeMetricsSpark
         extends MetricsCollectorSparkTool<InsertSizeMetricsArgumentCollection> {
 

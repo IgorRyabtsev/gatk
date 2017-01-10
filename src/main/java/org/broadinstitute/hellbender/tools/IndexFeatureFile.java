@@ -18,7 +18,6 @@ import org.broadinstitute.hellbender.engine.FeatureManager;
 import org.broadinstitute.hellbender.engine.ProgressMeter;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.utils.codecs.ProgressReportingDelegatingCodec;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,7 @@ import java.io.IOException;
         oneLineSummary = "Creates indices for Feature-containing files (eg VCF and BED files)",
         programGroup = VariantProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class IndexFeatureFile extends CommandLineProgram {
     private static final Logger logger = LogManager.getLogger(IndexFeatureFile.class);
 

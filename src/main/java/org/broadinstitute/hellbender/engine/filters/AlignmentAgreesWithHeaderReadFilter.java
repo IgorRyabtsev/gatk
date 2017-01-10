@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Checks to ensure that the alignment of each read makes sense based on the contents of the header.
  */
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_READFILTERS)
+@DocumentedFeature(groupName= HelpConstants.DOC_CAT_READFILTERS, groupSummary=HelpConstants.DOC_CAT_READFILTERS_SUMMARY)
 public final class AlignmentAgreesWithHeaderReadFilter extends ReadFilter implements Serializable {
     private static final long serialVersionUID = 1l;
 

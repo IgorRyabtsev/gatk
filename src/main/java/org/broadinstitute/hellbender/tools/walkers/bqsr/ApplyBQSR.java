@@ -15,7 +15,6 @@ import org.broadinstitute.hellbender.tools.ApplyBQSRArgumentCollection;
 import org.broadinstitute.hellbender.transformers.BQSRReadTransformer;
 import org.broadinstitute.hellbender.transformers.ReadTransformer;
 import org.broadinstitute.hellbender.utils.Utils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.SAMFileGATKReadWriter;
 
@@ -26,7 +25,7 @@ import java.io.File;
         oneLineSummary = "Applies the BQSR table to the input SAM/BAM/CRAM",
         programGroup = ReadProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class ApplyBQSR extends ReadWalker{
 
     private static final Logger logger = LogManager.getLogger(ApplyBQSR.class);

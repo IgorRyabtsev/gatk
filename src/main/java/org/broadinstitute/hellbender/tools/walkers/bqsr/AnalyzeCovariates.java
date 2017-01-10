@@ -158,7 +158,7 @@ import java.util.Optional;
         oneLineSummary = "Tool to analyze and evaluate base recalibration tables for BQSR",
         programGroup = QCProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_QC)
+@DocumentedFeature
 public final class AnalyzeCovariates extends CommandLineProgram {
 
     private final Logger logger = LogManager.getLogger(AnalyzeCovariates.class);

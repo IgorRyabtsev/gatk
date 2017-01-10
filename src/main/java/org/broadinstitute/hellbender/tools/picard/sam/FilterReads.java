@@ -14,7 +14,6 @@ import org.broadinstitute.hellbender.cmdline.PicardCommandLineProgram;
 import org.broadinstitute.hellbender.cmdline.StandardArgumentDefinitions;
 import org.broadinstitute.hellbender.cmdline.programgroups.ReadProgramGroup;
 import org.broadinstitute.hellbender.exceptions.UserException;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 import org.broadinstitute.hellbender.utils.runtime.ProgressLogger;
 
 import java.io.BufferedWriter;
@@ -32,7 +31,7 @@ import java.text.DecimalFormat;
         oneLineSummary = "Creates a new SAM/BAM/CRAM file by including or excluding aligned reads",
         programGroup = ReadProgramGroup.class
 )
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_DATA)
+@DocumentedFeature
 public final class FilterReads extends PicardCommandLineProgram {
 
     private static final Logger log = LogManager.getLogger();

@@ -12,7 +12,6 @@ import org.broadinstitute.hellbender.cmdline.programgroups.SparkProgramGroup;
 import org.broadinstitute.hellbender.engine.spark.GATKSparkTool;
 import org.broadinstitute.hellbender.engine.spark.datasources.VariantsSparkSource;
 import org.broadinstitute.hellbender.utils.gcs.BucketUtils;
-import org.broadinstitute.hellbender.utils.help.HelpConstants;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.List;
 @CommandLineProgramProperties(summary = "Counts variants in the input VCF",
         oneLineSummary = "CountVariants on Spark",
         programGroup = SparkProgramGroup.class)
-@DocumentedFeature(groupName= HelpConstants.DOCS_CAT_SPARK)
+@DocumentedFeature
 public final class CountVariantsSpark extends GATKSparkTool {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +42,7 @@ public final class CountVariantsSpark extends GATKSparkTool {
      * for Variant tools.
      */
     @Override
-    protected List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
+    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
         return new ArrayList<>();
     }
 
