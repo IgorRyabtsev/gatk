@@ -104,8 +104,7 @@ dependencies {
     compileOnly(javadocJDKFiles)
     testCompile(javadocJDKFiles)
 
-    compile 'org.broadinstitute:barclay:1.0.0-2-gb718440-SNAPSHOT'
-
+    compile 'org.broadinstitute:barclay:1.0.0-4-g1c633ed-SNAPSHOT'
     compile 'com.intel:genomicsdb:0.3.0'
     compile 'com.opencsv:opencsv:3.4'
     compile 'com.google.guava:guava:18.0'
