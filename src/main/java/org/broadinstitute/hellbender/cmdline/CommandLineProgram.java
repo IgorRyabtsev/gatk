@@ -17,6 +17,8 @@ import org.broadinstitute.barclay.argparser.CommandLineArgumentParser;
 import org.broadinstitute.barclay.argparser.CommandLineException;
 import org.broadinstitute.barclay.argparser.CommandLineParser;
 import org.broadinstitute.barclay.argparser.CommandLinePluginDescriptor;
+import org.broadinstitute.barclay.argparser.CommandLinePluginProvider;
+import org.broadinstitute.barclay.argparser.SpecialArgumentsCollection;
 import org.broadinstitute.hellbender.utils.LoggingUtils;
 import org.broadinstitute.hellbender.utils.Utils;
 
@@ -47,7 +49,7 @@ import java.util.List;
  * doWork() may throw unchecked exceptions, which are NOT caught and passed onto the VM.
  *
  */
-public abstract class CommandLineProgram {
+public abstract class CommandLineProgram implements CommandLinePluginProvider{
     protected final Logger logger = LogManager.getLogger(this.getClass());
 
     @Argument(common=true, optional=true)
@@ -238,7 +240,7 @@ public abstract class CommandLineProgram {
      * Return the list of GATKCommandLinePluginDescriptors to be used for this CLP.
      * Default implementation returns null. Subclasses can override this to return a custom list.
      */
-    protected List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() { return new ArrayList<>(); }
+    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() { return new ArrayList<>(); }
 
     /**
      * Prints the given message (may be null) to the provided stream, adding adornments and formatting.

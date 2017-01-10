@@ -17,8 +17,8 @@ import java.util.Map;
  * Custom Barclay-based Javadoc Doclet used for generating GATK help/documentation.
  *
  * NOTE: Methods in this class are intended to be called by Gradle/Javadoc only, and should not be called
- * by methods that are used by the GATK runtime, as this class has a dependency on com.sun.javadoc classes
- * which may not be present.
+ * by methods that are used by the GATK runtime. This class has a dependency on com.sun.javadoc classes,
+ * which may not be present since they're not provided as part of the normal GATK runtime classpath.
  */
 public class GATKHelpDoclet extends HelpDoclet {
 
@@ -76,35 +76,23 @@ public class GATKHelpDoclet extends HelpDoclet {
         return gatkGSONWorkUnit;
     }
 
-    //TODO: do we need to retain supercategory, and if so, we may need to update the rules...
     /**
-     * Trivial helper routine that returns the map of name and summary given the documentedFeatureObject
-     * AND adds a super-category so that we can custom-order the categories in the index
+     * Adds a super-category so that we can custom-order the categories in the doc index
      *
-     * @param documentedFeatureObject
+     * @param docWorkUnit
      * @return
      */
     @Override
-    protected final Map<String, String> getGroupMap(final DocumentedFeatureObject documentedFeatureObject) {
-        final Map<String, String> root = super.getGroupMap(documentedFeatureObject);
+    protected final Map<String, String> getGroupMap(final DocWorkUnit docWorkUnit) {
+        final Map<String, String> root = super.getGroupMap(docWorkUnit);
 
         /**
-         * Add-on super-category definitions. The assignments depend on parsing the names
-         * defined in HelpConstants.java so be careful of changing anything.  The super-category
-         * value strings need to be the same as used in the Freemarker template.
+         * Add-on super-category definitions. The super-category and spark value strings need to be the
+         * same as used in the Freemarker template.
          */
-        String supercatValue = "other";
-        if (documentedFeatureObject.groupName().endsWith(" Tools")) {
-            supercatValue = "tools";
-        } else if (documentedFeatureObject.groupName().endsWith(" Utilities")) {
-            supercatValue = "utilities";
-        } else if (documentedFeatureObject.groupName().startsWith("Engine ")) {
-            supercatValue = "engine";
-        } else if (documentedFeatureObject.groupName().endsWith(" (Exclude)")) {
-            supercatValue = "exclude";
-        }
+        root.put("supercat", HelpConstants.getSuperCategoryProperty(docWorkUnit.getGroupName()));
+        root.put("isspark", HelpConstants.getSparkCategoryProperty(docWorkUnit.getGroupName()));
 
-        root.put("supercat", supercatValue);
         return root;
     }
 

@@ -94,10 +94,18 @@ compileTestJava {
   options.compilerArgs = ['-proc:none', '-Xlint:all','-Werror','-Xdiags:verbose']
 }
 
+// Get the jdk files we need to run javaDoc. We need to use these during compile, testCompile,
+// test execution, and gatkDoc generation, but we don't want them as part of the runtime
+// classpath and we don't want to redistribute them in the uber jar.
+final javadocJDKFiles = files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs())
+
 dependencies {
+    // javadoc utilities; compile/test only to prevent redistribution of sdk jars
+    compileOnly(javadocJDKFiles)
+    testCompile(javadocJDKFiles)
+
     compile 'org.broadinstitute:barclay:1.0.0-2-gb718440-SNAPSHOT'
-    // javadoc utilities
-    compile(files(((URLClassLoader) ToolProvider.getSystemToolClassLoader()).getURLs()))
+
     compile 'com.intel:genomicsdb:0.3.0'
     compile 'com.opencsv:opencsv:3.4'
     compile 'com.google.guava:guava:18.0'
@@ -375,11 +383,9 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // do this for all javadoc tasks, inlcuding gatkDocs
-        options.addStringOption('Xdoclint:none')
-    }
+tasks.withType(Javadoc) {
+    // do this for all javadoc tasks, inlcuding gatkDocs
+    options.addStringOption('Xdoclint:none')
 }
 
 javadoc {
@@ -389,22 +395,27 @@ javadoc {
 }
 
 // Generate GATK Online Doc
-task gatkDoc(type: Javadoc, dependsOn: shadowJar) {
+task gatkDoc(type: Javadoc, dependsOn: classes) {
+    final File gatkDocDir = new File("./gatkDoc")
+    doFirst {
+        // make sure the output folder exists or we can create it
+        if (!gatkDocDir.exists() && !gatkDocDir.mkdirs()) {
+            throw new GradleException(String.format("Failure creating folder (%s) for GATK doc output in task (%s)",
+                    gatkDocDir.getAbsolutePath(),
+                    it.name));
+        }
+    }
     source = sourceSets.main.allJava
-    classpath = sourceSets.main.runtimeClasspath
 
-    // Since the custom doclet we run is basically another entry point for gatk, it needs all of the gatk
-    // dependencies on the docletpath (i.e., Barclay , etc), so we depend on and use the shadowJar. Also,
-    // add the resources folder to ensure log4j is configured.
-    options.docletpath = [file(shadowJar.archivePath)] + files("src/main/resources")
+    // The gatkDoc process instantiates any documented feature classes, so to run it we need the entire
+    // runtime classpath, as well as jdk javadoc files such as tools.jar, where com.sun.javadoc lives.
+    classpath = sourceSets.main.runtimeClasspath + javadocJDKFiles
+    options.docletpath = classpath.asType(List)
     options.doclet = "org.broadinstitute.hellbender.utils.help.GATKHelpDoclet"
 
-    // ensure the target folder already exists
-    File outDir = new File("./gatkDoc")
-    outDir.mkdirs()
-    outputs.dir outDir
+    outputs.dir gatkDocDir
+    options.addStringOption("destination-dir", gatkDocDir.getAbsolutePath())
 
-    options.addStringOption("destination-dir", outDir.getAbsolutePath())
     options.addStringOption("settings-dir", "src/main/resources/org/broadinstitute/hellbender/utils/helpTemplates");
     options.addStringOption("output-file-extension", "html")
     options.addStringOption("absolute-version", getVersion())

@@ -177,7 +177,7 @@ public abstract class AssemblyRegionWalker extends GATKTool {
      * Uses the read filter plugin.
      */
     @Override
-    protected List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
+    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
         return Collections.singletonList(new GATKReadFilterPluginDescriptor(getDefaultReadFilters()));
     }
 

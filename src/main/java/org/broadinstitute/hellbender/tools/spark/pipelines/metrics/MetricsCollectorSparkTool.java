@@ -31,12 +31,11 @@ import java.util.List;
  * collection lifecycle.
  */
 public abstract class MetricsCollectorSparkTool<T extends MetricsArgumentCollection>
-        extends GATKSparkTool
-        implements CommandLinePluginProvider {
+        extends GATKSparkTool {
 
     private static final long serialVersionUID = 1l;
 
-    /**nR
+    /**
      * The following {@link MetricsCollectorSpark} methods must be implemented by subclasses
      * and should be forwarded to the embedded collector.
      */
@@ -55,15 +54,6 @@ public abstract class MetricsCollectorSparkTool<T extends MetricsArgumentCollect
 
     @Override
     public final boolean requiresReads(){ return true; }
-
-    /**
-     * Return the list of GATKCommandLinePluginDescriptors to be used for this tool.
-     * Uses the read filter plugin.
-     */
-    @Override
-    public List<? extends CommandLinePluginDescriptor<?>> getPluginDescriptors() {
-        return Collections.singletonList(new GATKReadFilterPluginDescriptor(getDefaultReadFilters()));
-    }
 
     /**
      * The runTool method used when metrics collector tools are run
