@@ -37,7 +37,7 @@ public final class ExampleVariantWalkerSpark extends VariantWalkerSpark {
 
     @Override
     protected void processVariants(JavaRDD<VariantWalkerContext> rdd, JavaSparkContext ctx) {
-        rdd.map(variantFunction(auxiliaryVariants)).saveAsTextFile(outputFile);
+        rdd.map(variantFunction(auxiliaryVariants)).coalesce(1).saveAsTextFile(outputFile);
     }
 
     private static Function<VariantWalkerContext, String> variantFunction(FeatureInput<VariantContext> auxiliaryVariants) {

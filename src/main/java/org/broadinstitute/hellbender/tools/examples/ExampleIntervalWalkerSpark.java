@@ -42,7 +42,7 @@ public final class ExampleIntervalWalkerSpark extends IntervalWalkerSpark {
 
     @Override
     protected void processIntervals(JavaRDD<IntervalWalkerContext> rdd, JavaSparkContext ctx) {
-        rdd.map(intervalFunction(optionalVariants.variantFiles)).saveAsTextFile(outputFile);
+        rdd.map(intervalFunction(optionalVariants.variantFiles)).coalesce(1).saveAsTextFile(outputFile);
     }
 
     private static Function<IntervalWalkerContext, String> intervalFunction(List<FeatureInput<VariantContext>> auxiliaryVariants) {

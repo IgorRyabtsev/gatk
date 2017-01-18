@@ -84,6 +84,8 @@ public final class ReadsSparkSource implements Serializable {
      * @return RDD of (SAMRecord-backed) GATKReads from the file.
      */
     public JavaRDD<GATKRead> getParallelReads(final String readFileName, final String referencePath, final List<SimpleInterval> intervals, final long splitSize) {
+        getHeader(readFileName, referencePath, null); // read header as file sanity check to fail fast
+
         // use the Hadoop configuration attached to the Spark context to maintain cumulative settings
         final Configuration conf = ctx.hadoopConfiguration();
         if (splitSize > 0) {
@@ -116,7 +118,7 @@ public final class ReadsSparkSource implements Serializable {
 
     /**
      * Loads Reads using Hadoop-BAM. For local files, readFileName must have the fully-qualified path,
-     * i.e., file:///path/to/bam.bam. This excludes unmapped reads.
+     * i.e., file:///path/to/bam.bam.
      * @param readFileName file to load
      * @param referencePath Reference path or null if not available. Reference is required for CRAM files.
      * @return RDD of (SAMRecord-backed) GATKReads from the file.
@@ -135,9 +137,7 @@ public final class ReadsSparkSource implements Serializable {
      * @return RDD of (SAMRecord-backed) GATKReads from the file.
      */
     public JavaRDD<GATKRead> getParallelReads(final String readFileName, final String referencePath, int splitSize) {
-        final SAMFileHeader readsHeader = getHeader(readFileName, referencePath, null);
-        List<SimpleInterval> intervals = IntervalUtils.getAllIntervalsForReference(readsHeader.getSequenceDictionary());
-        return getParallelReads(readFileName, referencePath, intervals, splitSize);
+        return getParallelReads(readFileName, referencePath, null, splitSize);
     }
 
     /**

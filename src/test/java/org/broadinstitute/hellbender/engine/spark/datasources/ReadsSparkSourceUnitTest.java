@@ -122,7 +122,7 @@ public class ReadsSparkSourceUnitTest extends BaseTest {
 
         List<GATKRead> serialReads = rddSerialReads.collect();
         List<GATKRead> parallelReads = rddParallelReads.collect();
-        Assert.assertEquals(serialReads.size(), parallelReads.size());
+        Assert.assertEquals(parallelReads.size(), serialReads.size());
     }
 
     @Test(groups = "spark")
@@ -228,7 +228,6 @@ public class ReadsSparkSourceUnitTest extends BaseTest {
      */
     public JavaRDD<GATKRead> getSerialReads(final JavaSparkContext ctx, final String bam, final String referencePath, final ValidationStringency validationStringency) {
         final SAMFileHeader readsHeader = new ReadsSparkSource(ctx, validationStringency).getHeader(bam, referencePath, null);
-        List<SimpleInterval> intervals = IntervalUtils.getAllIntervalsForReference(readsHeader.getSequenceDictionary());
 
         final SamReaderFactory samReaderFactory;
         if (referencePath != null) {
@@ -239,7 +238,6 @@ public class ReadsSparkSourceUnitTest extends BaseTest {
         }
 
         ReadsDataSource bam2 = new ReadsDataSource(IOUtils.getPath(bam), samReaderFactory);
-        bam2.setTraversalBounds(intervals);
         List<GATKRead> records = Lists.newArrayList();
         for ( GATKRead read : bam2 ) {
             records.add(read);

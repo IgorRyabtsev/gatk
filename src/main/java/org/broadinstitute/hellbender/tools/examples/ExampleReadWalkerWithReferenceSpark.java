@@ -34,7 +34,7 @@ public final class ExampleReadWalkerWithReferenceSpark extends ReadWalkerSpark {
 
     @Override
     protected void processReads(JavaRDD<ReadWalkerContext> rdd, JavaSparkContext ctx) {
-        rdd.map(readFunction()).saveAsTextFile(outputFile);
+        rdd.map(readFunction()).coalesce(1).saveAsTextFile(outputFile);
     }
 
     private Function<ReadWalkerContext, String> readFunction() {

@@ -77,7 +77,7 @@ public final class ExampleAssemblyRegionWalkerSpark extends AssemblyRegionWalker
 
     @Override
     protected void processAssemblyRegions(JavaRDD<AssemblyRegionWalkerContext> rdd, JavaSparkContext ctx) {
-        rdd.map(assemblyFunction(knownVariants)).saveAsTextFile(outputFile);
+        rdd.map(assemblyFunction(knownVariants)).coalesce(1).saveAsTextFile(outputFile);
     }
 
     private static Function<AssemblyRegionWalkerContext, String> assemblyFunction(FeatureInput<VariantContext> knownVariants) {

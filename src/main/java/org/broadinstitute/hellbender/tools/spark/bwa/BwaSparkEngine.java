@@ -5,12 +5,15 @@ import com.github.lindenb.jbwa.jni.BwaMem;
 import com.github.lindenb.jbwa.jni.ShortRead;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
 import htsjdk.samtools.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.FlatMapFunction2;
 import org.apache.spark.broadcast.Broadcast;
 import org.broadinstitute.hellbender.exceptions.GATKException;
 import org.broadinstitute.hellbender.exceptions.UserException;
@@ -65,10 +68,9 @@ public final class BwaSparkEngine implements Serializable{
 
     public JavaRDD<GATKRead> alignWithBWA(final JavaSparkContext ctx, final JavaRDD<GATKRead> unalignedReads, final SAMFileHeader readsHeader) {
         //Note: SparkContext is not serializable so we don't store it in the engine and set this property here. Setting it multiple times is fine.
-        // ensure reads in a pair fall in the same partition (input split), so they are processed together
-        ctx.hadoopConfiguration().setBoolean(BAMInputFormat.KEEP_PAIRED_READS_TOGETHER_PROPERTY, true);
 
-        final JavaRDD<Tuple2<ShortRead, ShortRead>> shortReadPairs = convertToUnalignedReadPairs(unalignedReads);
+        final JavaRDD<GATKRead> unalignedReadPairs = putPairsInSamePartition(ctx, unalignedReads);
+        final JavaRDD<Tuple2<ShortRead, ShortRead>> shortReadPairs = convertToUnalignedReadPairs(unalignedReadPairs);
         final JavaRDD<String> samLines = align(shortReadPairs);
         final Broadcast<SAMFileHeader>  readsHeaderBroadcast = ctx.broadcast(readsHeader);
         return samLines.mapPartitions(lineIterator -> {
@@ -81,6 +83,36 @@ public final class BwaSparkEngine implements Serializable{
                 reads.add(new SAMRecordToGATKReadAdapter(samLineParser.parseLine(samLine)));
             }
             return reads.iterator();
+        });
+    }
+
+    /**
+     * Ensure reads in a pair fall in the same partition (input split), so they are processed together. No shuffle is needed.
+     */
+    static JavaRDD<GATKRead> putPairsInSamePartition(final JavaSparkContext ctx, final JavaRDD<GATKRead> unalignedReads) {
+        int numPartitions = unalignedReads.getNumPartitions();
+        // Find the first read in each partition
+        List<GATKRead> firstReadInEachPartition = unalignedReads
+                .mapPartitions((FlatMapFunction<Iterator<GATKRead>, GATKRead>) it -> Iterators.singletonIterator(it.next()))
+                .collect();
+        // Shift left, so that each partition will be joined with the first read from the _next_ partition
+        List<GATKRead> firstReadInNextPartition = new ArrayList<>(firstReadInEachPartition.subList(1, numPartitions));
+        firstReadInNextPartition.add(null); // the last partition does not have any reads to add to it
+
+        // Join the reads with the first read from the _next_ partition, then filter out the first and/or last read if not in a pair
+        return unalignedReads.zipPartitions(ctx.parallelize(firstReadInNextPartition, numPartitions),
+                (FlatMapFunction2<Iterator<GATKRead>, Iterator<GATKRead>, GATKRead>) (it1, it2) -> {
+            PeekingIterator<GATKRead> current = Iterators.peekingIterator(it1);
+            // skip the first read in the _current_ partition if it is the second in a pair since it will be handled in the previous partition
+            if (current.hasNext() && current.peek() != null && current.peek().isSecondOfPair()) {
+                current.next();
+            }
+            // append the first read in the _next_ partition to the _current_ partition if it is the second in a pair
+            PeekingIterator<GATKRead> next = Iterators.peekingIterator(it2);
+            if (next.hasNext() && next.peek() != null && next.peek().isSecondOfPair()) {
+                return Iterators.concat(current, next);
+            }
+            return current;
         });
     }
 
