@@ -1,24 +1,29 @@
 package org.broadinstitute.hellbender.utils.bwa;
 
 import htsjdk.samtools.*;
-import htsjdk.samtools.util.QualityUtil;
 import htsjdk.samtools.util.SequenceUtil;
 import org.broadinstitute.hellbender.exceptions.GATKException;
 import org.broadinstitute.hellbender.utils.BaseUtils;
-import org.broadinstitute.hellbender.utils.QualityUtils;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.broadinstitute.hellbender.utils.read.SAMRecordToGATKReadAdapter;
 
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Info from the Aligner about an alignment to reference that it discovered for some sequence.
+ * (Right now, just implemented for BWA mem.)
+ * Please note that the refId is with respect to the BWA index reference names, and might not match the reference
+ * indexes floating around in the rest of GATK.  This is especially likely to be true, and very confusing, if you're
+ * re-aligning some BAM against a new reference.  Odds are good that the SAMFileHeader and these refId's won't match up.
+ */
 public class Alignment {
     private final int samFlag;     // flag bits per SAM format standard
     private final int refId;       // index into reference dictionary (-1 if unmapped)
     private final int refStart;    // 0-based coordinate, inclusive (-1 if unmapped)
     private final int refEnd;      // 0-based coordinate, exclusive (-1 if unmapped)
-    private final int tigStart;    // 0-based coordinate, inclusive (-1 if unmapped)
-    private final int tigEnd;      // 0-based coordinate, exclusive (-1 if unmapped)
+    private final int seqStart;    // 0-based coordinate, inclusive (-1 if unmapped)
+    private final int seqEnd;      // 0-based coordinate, exclusive (-1 if unmapped)
     private final int mapQual;     // phred-scaled mapping quality (-1 if unmapped)
     private final int nMismatches; // number of mismatches (i.e., value of the NM tag in a SAM/BAM) (-1 if unmapped)
     private final int alignerScore; // for AS tag
@@ -31,7 +36,7 @@ public class Alignment {
     private final int templateLen; // inferred template length (0 if unpaired, mate unmapped, or on different ref contigs)
 
     public Alignment( final int samFlag, final int refId, final int refStart, final int refEnd,
-                      final int tigStart, final int tigEnd, final int mapQual,
+                      final int seqStart, final int seqEnd, final int mapQual,
                       final int nMismatches, final int alignerScore, final int suboptimalScore,
                       final Cigar cigar, final String mdTag, final String xaTag,
                       final int mateRefId, final int mateRefStart, final int templateLen ) {
@@ -39,8 +44,8 @@ public class Alignment {
         this.refId = refId;
         this.refStart = refStart;
         this.refEnd = refEnd;
-        this.tigStart = tigStart;
-        this.tigEnd = tigEnd;
+        this.seqStart = seqStart;
+        this.seqEnd = seqEnd;
         this.mapQual = mapQual;
         this.nMismatches = nMismatches;
         this.alignerScore = alignerScore;
@@ -57,8 +62,8 @@ public class Alignment {
     public int getRefId() { return refId; }
     public int getRefStart() { return refStart; }
     public int getRefEnd() { return refEnd; }
-    public int getTigStart() { return tigStart; }
-    public int getTigEnd() { return tigEnd; }
+    public int getSeqStart() { return seqStart; }
+    public int getSeqEnd() { return seqEnd; }
     public int getMapQual() { return mapQual; }
     public int getNMismatches() { return nMismatches; }
     public int getAlignerScore() { return alignerScore; }
@@ -69,31 +74,35 @@ public class Alignment {
     public int getMateRefStart() { return mateRefStart; }
     public int getTemplateLen() { return templateLen; }
 
+    /**
+     * Transforms an unaligned GATKRead into an aligned one, as specified by this Alignment.
+     * This method will not work reliably on a previously aligned read:  stale tag information about the previous
+     * alignment might get left behind.
+     *
+     * Also, BWA does this odd thing, supplying AS and XS tags for unaligned reads.
+     * To produce SAM records that are byte-identical to the ones created by the bwa mem command line,
+     * call this method with justLikeBWA=true.
+     */
     public GATKRead apply( final GATKRead originalRead, final List<String> refNames, final SAMFileHeader header,
                            final boolean softclipAlts, final boolean justLikeBWA ) {
-        final SAMRecord samRecord;
-        try {
-            samRecord = (SAMRecord)originalRead.convertToSAMRecord(header).clone();
-        } catch ( CloneNotSupportedException x ) {
-            throw new GATKException("can't clone SAMRecord", x);
-        }
+        final SAMRecord samRecord = new SAMRecord(header);
+        samRecord.setReadName(originalRead.getName());
         samRecord.setFlags(samFlag);
         if ( refId >= 0 ) samRecord.setReferenceName(refNames.get(refId));
         else if ( mateRefId >= 0 ) samRecord.setReferenceName(refNames.get(mateRefId));
         if ( refStart >= 0 ) samRecord.setAlignmentStart(refStart+1);
         else if ( mateRefStart >= 0 ) samRecord.setAlignmentStart(mateRefStart+1);
         if ( mapQual >= 0 ) samRecord.setMappingQuality(mapQual);
-        byte[] seq = samRecord.getReadBases();
-        byte[] quals = samRecord.getBaseQualities();
-        if ( (samFlag & SAMFlag.READ_REVERSE_STRAND.intValue()) != 0 &&
-                (samFlag & SAMFlag.NOT_PRIMARY_ALIGNMENT.intValue()) == 0 ) {
+        byte[] seq = originalRead.getBases();
+        byte[] quals = originalRead.getBaseQualities();
+        if ( SAMFlag.READ_REVERSE_STRAND.isSet(samFlag) && SAMFlag.NOT_PRIMARY_ALIGNMENT.isUnset(samFlag) ) {
             seq = BaseUtils.simpleReverseComplement(seq);
             quals = Arrays.copyOf(quals, quals.length);
             SequenceUtil.reverseQualities(quals);
         }
         if ( cigar != null && !cigar.isEmpty() ) {
             Cigar tmpCigar = cigar;
-            if ( !softclipAlts && (samFlag & SAMFlag.SUPPLEMENTARY_ALIGNMENT.intValue()) != 0 ) {
+            if ( !softclipAlts && SAMFlag.SUPPLEMENTARY_ALIGNMENT.isSet(samFlag) ) {
                 if ( tmpCigar.getFirstCigarElement().getOperator() == CigarOperator.S ||
                         tmpCigar.getLastCigarElement().getOperator() == CigarOperator.S ) {
                     tmpCigar = new Cigar();
@@ -106,8 +115,8 @@ public class Alignment {
                         }
                     }
                 }
-                seq = Arrays.copyOfRange(seq, tigStart, tigEnd);
-                quals = Arrays.copyOfRange(quals, tigStart, tigEnd);
+                seq = Arrays.copyOfRange(seq, seqStart, seqEnd);
+                quals = Arrays.copyOfRange(quals, seqStart, seqEnd);
             }
             samRecord.setCigar(tmpCigar);
             samRecord.setAttribute("NM", nMismatches);
@@ -125,18 +134,21 @@ public class Alignment {
         if ( mateRefStart >= 0 ) samRecord.setMateAlignmentStart(mateRefStart+1);
         else if ( refStart >= 0 ) samRecord.setMateAlignmentStart(refStart+1);
         if ( templateLen != 0 ) samRecord.setInferredInsertSize(templateLen);
-        if ( (samFlag & SAMFlag.NOT_PRIMARY_ALIGNMENT.intValue()) == 0 ) {
+        else samRecord.setInferredInsertSize(0);
+        if ( SAMFlag.NOT_PRIMARY_ALIGNMENT.isUnset(samFlag) ) {
             samRecord.setReadBases(seq);
             samRecord.setBaseQualities(quals);
         } else {
             samRecord.setReadBases(SAMRecord.NULL_SEQUENCE);
             samRecord.setBaseQualities(SAMRecord.NULL_QUALS);
         }
+        final String readGroup = originalRead.getReadGroup();
+        if ( readGroup != null ) samRecord.setAttribute(SAMTag.RG.name(), readGroup);
         return SAMRecordToGATKReadAdapter.headerlessReadAdapter(samRecord);
     }
 
     public String asTag( final List<String> refNames ) {
-        return refNames.get(refId)+","+(refStart+1)+","+((samFlag&SAMFlag.READ_REVERSE_STRAND.intValue())!=0?"-":"+")+","+
+        return refNames.get(refId)+","+(refStart+1)+","+(SAMFlag.READ_REVERSE_STRAND.isSet(samFlag)?"-":"+")+","+
                 cigar.toString()+","+mapQual+","+nMismatches+";";
     }
 }

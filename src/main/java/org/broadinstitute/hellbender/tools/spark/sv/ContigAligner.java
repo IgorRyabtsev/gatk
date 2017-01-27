@@ -1,14 +1,11 @@
 package org.broadinstitute.hellbender.tools.spark.sv;
 
 import htsjdk.samtools.SAMFlag;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.broadinstitute.hellbender.utils.bwa.Aligner;
 import org.broadinstitute.hellbender.utils.bwa.Alignment;
 import org.broadinstitute.hellbender.utils.bwa.BwaMemIndex;
+import org.broadinstitute.hellbender.utils.bwa.BwaMemIndexSingleton;
 import scala.Tuple2;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.broadinstitute.hellbender.tools.spark.sv.ContigsCollection.ContigID;
@@ -33,7 +30,7 @@ public class ContigAligner {
      */
     public List<AlignmentRegion> alignContigs(final String assemblyId, final ContigsCollection contigsCollection) {
         final List<AlignmentRegion> alignedContigs = new ArrayList<>(contigsCollection.getContents().size());
-        try ( final BwaMemIndex.BwaMemAligner aligner = BwaMemIndex.getInstance(indexImageFile).createAligner() ) {
+        try ( final BwaMemIndex.BwaMemAligner aligner = BwaMemIndexSingleton.getInstance(indexImageFile).createAligner() ) {
             final List<String> refNames = aligner.getReferenceContigNames();
             final List<Tuple2<ContigID, ContigSequence>> contents = contigsCollection.getContents();
             final List<byte[]> seqs = new ArrayList<>(contents.size());

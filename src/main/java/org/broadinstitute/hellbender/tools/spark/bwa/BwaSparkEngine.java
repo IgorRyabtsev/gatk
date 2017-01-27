@@ -10,6 +10,7 @@ import org.broadinstitute.hellbender.exceptions.GATKException;
 import org.broadinstitute.hellbender.utils.Utils;
 import org.broadinstitute.hellbender.utils.bwa.Alignment;
 import org.broadinstitute.hellbender.utils.bwa.BwaMemIndex;
+import org.broadinstitute.hellbender.utils.bwa.BwaMemIndexSingleton;
 import org.broadinstitute.hellbender.utils.read.GATKRead;
 import org.seqdoop.hadoop_bam.BAMInputFormat;
 
@@ -18,6 +19,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * The BwaSparkEngine provides a simple interface for transforming a JavaRDD<GATKRead> in which the reads are paired
+ * and unaligned, into a JavaRDD<GATKRead> of aligned reads, and does so lazily.
+ * Use it like this:
+ *     Make one, call the align method for each of your input RDDs in a pipeline that runs some action, close it.
+ *
+ * The reason that the pipeline must culminate in some action, is because this class implements a lazy
+ * transform, and nothing will happen otherwise.
+ *
+ * See {@link BwaSpark#runTool runTool} for an example.
+ */
 public final class BwaSparkEngine implements AutoCloseable {
     private final JavaSparkContext ctx;
     private final String indexFileName;
@@ -53,7 +65,7 @@ public final class BwaSparkEngine implements AutoCloseable {
     @Override
     public void close() {
         broadcastHeader.destroy();
-        BwaMemIndex.closeAllDistributedInstances(ctx);
+        BwaMemIndexSingleton.closeAllDistributedInstances(ctx);
     }
 
     private static final class ReadAligner {
@@ -64,7 +76,7 @@ public final class BwaSparkEngine implements AutoCloseable {
         private static final int READS_PER_PARTITION_GUESS = 1500000;
 
         ReadAligner( final String indexFileName, final SAMFileHeader readsHeader ) {
-            this.bwaMemIndex = BwaMemIndex.getInstance(indexFileName);
+            this.bwaMemIndex = BwaMemIndexSingleton.getInstance(indexFileName);
             this.readsHeader = readsHeader;
         }
 
@@ -85,6 +97,7 @@ public final class BwaSparkEngine implements AutoCloseable {
                     seqs.add(read.getBases());
                 }
                 final BwaMemIndex.BwaMemAligner aligner = bwaMemIndex.createAligner();
+                // we are dealing with interleaved, paired reads.  tell BWA that they're paired.
                 aligner.setFlagOption(aligner.getFlagOption()|BwaMemIndex.BwaMemAligner.MEM_F_PE);
                 allAlignments = aligner.alignSeqs(seqs);
             }

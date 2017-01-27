@@ -44,8 +44,8 @@ class AlignmentRegion {
         this.referenceInterval = new SimpleInterval(refNames.get(alignment.getRefId()), alignment.getRefStart()+1, alignment.getRefEnd());
         this.mapQual = alignment.getMapQual();
         this.assembledContigLength = contigLen;
-        this.startInAssembledContig = alignment.getTigStart()+1;
-        this.endInAssembledContig = alignment.getTigEnd();
+        this.startInAssembledContig = alignment.getSeqStart()+1;
+        this.endInAssembledContig = alignment.getSeqEnd();
         this.mismatches = alignment.getNMismatches();
     }
 

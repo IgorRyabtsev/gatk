@@ -4,7 +4,6 @@ import htsjdk.samtools.Cigar;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMFlag;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.broadinstitute.hellbender.exceptions.GATKException;
 import org.broadinstitute.hellbender.exceptions.UserException;
 import org.broadinstitute.hellbender.utils.NativeUtils;
@@ -16,12 +15,33 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * BwaMemIndex manages the mapping of a bwa index image file into (non-Java) memory.
+ * It's typically a huge chunk of memory, so you need to manage it as a precious resource.
+ *
+ * Usage pattern is:
+ *   Create a BwaMemIndex for some reference.
+ *   Create Aligners as needed to do some aligning -- they're pretty lightweight and thread safe.
+ *     (But you may need to manage memory by controlling the number of reads that you align in one chunk.)
+ *   Close the BwaMemIndex when you're done aligning.
+ *
+ * This class doesn't know anything about Spark.  You can use it in a distributed setting if you distribute the index
+ * file to each node using the Yarn --files mechanism.  You might find it convenient to manage a singleton instance
+ * of a BwaMemIndex on each Java VM when you're running distributed:  check out BwaMemIndexSingleton.
+ *
+ * Alternatively, you could use this class directly to run bwa multi-threaded on a single machine,
+ * if that's what you want to do.
+ */
 public final class BwaMemIndex implements AutoCloseable {
     private long indexAddress;
     private final List<String> refContigNames;
-    private static volatile BwaMemIndex globalInstance;
+    private static volatile boolean nativeLibLoaded = false;
 
+    /**
+     * This method creates the new, single-file bwa index image from the 5 files that the "bwa index" produces.
+     */
     public static void createIndexImage( final String refName, final String imgName ) {
+        loadNativeLibrary();
         assertNonEmptyReadable(refName+".amb");
         assertNonEmptyReadable(refName+".ann");
         assertNonEmptyReadable(refName+".bwt");
@@ -30,51 +50,8 @@ public final class BwaMemIndex implements AutoCloseable {
         createIndexImageFile(refName, imgName);
     }
 
-    public static BwaMemIndex getInstance( final String indexImageFile ) {
-        BwaMemIndex result = globalInstance;
-        if ( result == null ) {
-            synchronized(BwaMemIndex.class) {
-                result = globalInstance;
-                if ( result == null ) globalInstance = result = new BwaMemIndex(indexImageFile);
-            }
-        }
-        return result;
-    }
-
-    public static void closeInstance() {
-        BwaMemIndex result = globalInstance;
-        if ( result != null ) {
-            synchronized(BwaMemIndex.class) {
-                result = globalInstance;
-                if ( result != null ) {
-                    globalInstance = null;
-                    result.close();
-                }
-            }
-        }
-    }
-
-    public static void closeAllDistributedInstances( final JavaSparkContext ctx ) {
-        int nJobs = ctx.defaultParallelism();
-        final List<Integer> jobList = new ArrayList<>(nJobs);
-        for ( int idx = 0; idx != nJobs; ++idx ) jobList.add(idx);
-        ctx.parallelize(jobList, nJobs).foreach(idx -> BwaMemIndex.closeInstance());
-    }
-
-    static {
-        final String libName;
-        if (NativeUtils.runningOnLinux()) libName = "/libbwa.Linux.so";
-        else if (NativeUtils.runningOnMac()) libName = "/libbwa.Darwin.dylib";
-        else libName = null;
-        if ( libName == null ) {
-            throw new UserException.HardwareFeatureException("We have a JNI binding for bwa-mem only for Linux and Mac.");
-        }
-        if ( !NativeUtils.loadLibraryFromClasspath(libName) ) {
-            throw new UserException.HardwareFeatureException("Misconfiguration: Unable to load bwa-mem native library "+libName);
-        }
-    }
-
     public BwaMemIndex( final String indexImageFile ) {
+        loadNativeLibrary();
         assertNonEmptyReadable(indexImageFile);
         indexAddress = openIndex(indexImageFile);
         if ( indexAddress == 0L ) {
@@ -97,9 +74,11 @@ public final class BwaMemIndex implements AutoCloseable {
     }
 
     @Override
-    public synchronized void close() {
-        if ( indexAddress != 0 ) destroyIndex(indexAddress);
-        indexAddress = 0;
+    public void close() {
+        if ( indexAddress != 0 ) {
+            destroyIndex(indexAddress);
+            indexAddress = 0;
+        }
     }
 
     public BwaMemAligner createAligner() { return new BwaMemAligner(); }
@@ -108,7 +87,7 @@ public final class BwaMemIndex implements AutoCloseable {
         return refContigNames;
     }
 
-    public final class BwaMemAligner implements Aligner {
+    public final class BwaMemAligner implements Aligner, AutoCloseable {
         private final ByteBuffer opts;
 
         public BwaMemAligner() {
@@ -116,6 +95,7 @@ public final class BwaMemIndex implements AutoCloseable {
             opts.order(ByteOrder.nativeOrder()).position(0).limit(opts.capacity());
         }
 
+        @Override
         public void close() {
             destroyByteBuffer(opts);
         }
@@ -335,6 +315,29 @@ public final class BwaMemIndex implements AutoCloseable {
             return is.read() != -1;
         } catch ( final IOException ioe ) {
             return false;
+        }
+    }
+
+    private static void loadNativeLibrary() {
+        if ( !nativeLibLoaded ) {
+            synchronized(BwaMemIndex.class) {
+                if ( !nativeLibLoaded ) {
+                    final String libNameOverride = System.getProperty("LIBBWA_PATH");
+                    final String libName;
+                    if ( libNameOverride != null ) libName = libNameOverride;
+                    else if ( NativeUtils.runningOnPPCArchitecture() ) libName = null;
+                    else if ( NativeUtils.runningOnMac() ) libName = "/libbwa.Darwin.dylib";
+                    else if ( NativeUtils.runningOnLinux() ) libName = "/libbwa.Linux.so";
+                    else libName = null;
+                    if ( libName == null ) {
+                        throw new UserException.HardwareFeatureException("We have a JNI binding for bwa-mem only for x86-64 Linux and Mac.");
+                    }
+                    if ( !NativeUtils.loadLibraryFromClasspath(libName) ) {
+                        throw new UserException.HardwareFeatureException("Misconfiguration: Unable to load bwa-mem native library "+libName);
+                    }
+                    nativeLibLoaded = true;
+                }
+            }
         }
     }
 
